@@ -19,13 +19,15 @@ setInterval(()=> {
   ctx.fillStyle = '#626262'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  ctx.fillStyle = '#FFF'
-  ctx.fillRect(snake.x, snake.y, scale, scale)
+  if (snake.x === apple.x && snake.y === apple.y) {
+    snake.eat(apple)
+  }
+
+  snake.draw(ctx)
   snake.go()
 
-  ctx.fillStyle = '#00FF7F'
-  ctx.fillRect(apple.x, apple.y, scale, scale)
-}, 1000 / 10 )
+  apple.draw(ctx)
+}, 1000 / 8 )
 
 
 
