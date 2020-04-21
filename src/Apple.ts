@@ -1,4 +1,5 @@
 import {scale, width, height} from './index'
+import Snake, { ITail } from './Snake'
 
 class Apple {
   x: number
@@ -9,25 +10,17 @@ class Apple {
     ctx.fillRect(this.x, this.y, scale, scale)
   }
 
-  create(snakeX: number, snakeY: number) {
-    this.x = getRandom().x
-    this.y = getRandom().y
-    
-    while (this.x === snakeX && this.y === snakeY) {
-      this.x = getRandom().x
-      this.y = getRandom().y
-    }
+  getRandom (size: number) {
+    let randInt = (Math.floor(Math.random() * size / scale - 1) + 1) * scale
+
+    return randInt
+  }
+
+  create() {
+    this.x = this.getRandom(width)
+    this.y = this.getRandom(height)
   }
 }
 
-function getRandom () {
-  const x = (Math.floor(Math.random() * width / scale - 1) + 1) * scale
-  const y = (Math.floor(Math.random() * height / scale - 1) + 1) * scale
-
-  return {
-    x,
-    y
-  }
-}
 
 export default Apple

@@ -1,7 +1,7 @@
 import {scale, width, height} from './index'
 import Apple from './Apple'
 
-interface ITail {
+export interface ITail {
   x: number
   y: number
 }
@@ -15,8 +15,8 @@ class Snake {
   x: number
   y: number
   direction: SnakeDir
-  total: number
   tail: ITail[]
+  died: boolean
 
   constructor() {
     this.x = 0
@@ -27,13 +27,14 @@ class Snake {
   create() {
     this.x = getRandom().x
     this.y = getRandom().y
-    this.total = 0
     this.tail = []
+    this.died = false
+    this.tail.push({x: -scale, y: -scale})
   }
 
   eat(apple: Apple) {
-    this.total++
-    apple.create(this.x, this.y)
+    this.tail.push({x: -scale, y: -scale})
+    apple.create()
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -49,15 +50,15 @@ class Snake {
   go() {
     const [dirX, dirY] = this.direction
 
-    for (let i = 0; i < this.tail.length - 1; i++) {
-      this.tail[i] = this.tail[i + 1]
+    if (this.tail.length != 0) {
+      for (let i = 0; i < this.tail.length - 1; i++) {
+        this.tail[i] = this.tail[i + 1]
+      }
+      this.tail[this.tail.length - 1] = {x: this.x, y: this.y}
     }
-
-    this.tail[this.total - 1] = {x: this.x, y: this.y}
-
-
-    this.x += dirX * 10
-    this.y += dirY * 10
+    
+    this.x += dirX * scale
+    this.y += dirY * scale
 
     if (this.x > width) {
       this.x = 0
@@ -74,10 +75,24 @@ class Snake {
     if (this.y < 0) {
       this.y = height
     }
+
+    this.tail.forEach((arr) => {
+      if (this.x === arr.x && this.y === arr.y) {
+        this.died = true
+      }
+    })
   }
 
-  changeDirection(direction: SnakeDir) {
-    this.direction = direction
+  changeDirection(newDir: SnakeDir) {
+    const [dirX, dirY] = this.direction
+    const [newX, newY] = newDir
+    if (dirX === 0 && newX !== 0 ) {
+      this.direction = newDir
+    }
+
+    if (dirY === 0 && newY !== 0 ) {
+      this.direction = newDir
+    }
   }
 }
 
@@ -85,10 +100,7 @@ function getRandom () {
   const x = (Math.floor(Math.random() * width / scale - 1) + 1) * scale
   const y = (Math.floor(Math.random() * height / scale - 1) + 1) * scale
 
-  return {
-    x,
-    y
-  }
+  return {x, y}
 }
 
 export default Snake
